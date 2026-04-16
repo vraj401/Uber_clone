@@ -22,11 +22,13 @@ const registerCaptain = async ({
             capacity,
             vehicleType
         }
-       })}catch(err){
+       })
+       return captain;
+    
+    }catch(err){
         throw new Error(err)
        }
 
-         return captain;
  
 
 }

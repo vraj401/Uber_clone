@@ -4,7 +4,8 @@ import { validationResult } from "express-validator";
 import {body} from "express-validator";
 import userModel from "../models/user.model.js";
 import userController from "../controllers/user.controller.js";
-import authUser from "../middleware/auth.middleware.js";
+import { authUser } from "../middleware/auth.middleware.js";
+
 
 router.post("/register", [
     body('email').isEmail().withMessage("Please enter a valid email address"),  
@@ -21,8 +22,8 @@ router.post("/login",
     userController.loginUser
 )
 
-router.get("/profile",authUser,userController.getProfile)
-router.post("/logout",authUser,userController.logoutUser)
+router.get("/profile", authUser, userController.getProfile)
+router.post("/logout", authUser, userController.logoutUser)
 
 
 export default router;

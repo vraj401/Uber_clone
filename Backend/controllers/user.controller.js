@@ -74,12 +74,19 @@ const loginUser = async (req,res,next) => {
 }
 
 const getProfile = async (req,res,next) => {
+    
     res.status(200).json({user:req.user})
 }
 
 const logoutUser = async (req,res,next) => {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    await BlackListToken.create({token})
+    try {
+    await BlackListToken.create({ token });
+} catch (err) {
+    if (err.code !== 11000) { // ignore duplicate error
+        throw err;
+    }
+}
     res.clearCookie("token");
 
     res.status(200).json({

@@ -24,7 +24,7 @@ export const authUser = async (req,res,next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Decoded JWT:", decoded);
+    
         const user = await userModel.findById(decoded._id);
 
         req.user = user;
@@ -60,6 +60,12 @@ export const authCaptain = async (req,res,next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
         const captain = await captainModel.findById(decoded._id);
+        if(!captain){
+            return res.status(401).json({
+                success:false,
+                message:"Captain not found"
+            })
+        }
         req.captain = captain;
         return next();
     } catch (error) {

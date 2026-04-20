@@ -23,8 +23,6 @@ const CaptainProtectWrapper = ({ children }) => {
       }
     })
     .then(response => {
-        console.log(response)
-
       if (response.status === 200) {
         setCaptain(response.data.captain)
       }

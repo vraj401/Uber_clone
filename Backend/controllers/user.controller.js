@@ -46,6 +46,7 @@ const loginUser = async (req,res,next) => {
     const user = await userModel.findOne({email}).select("+password");
 
     if(!user){
+        console.log("user not found")
         return res.status(401).json({
             success:false,
             message:"User not found"
@@ -55,6 +56,7 @@ const loginUser = async (req,res,next) => {
     const isMatch = await user.comparePassword(password);
 
     if(!isMatch){
+        console.log("invalid credentials")
         return res.status(401).json({
             success:false,
             message:"Invalid credentials"
@@ -74,7 +76,7 @@ const loginUser = async (req,res,next) => {
 }
 
 const getProfile = async (req,res,next) => {
-    
+
     res.status(200).json({user:req.user})
 }
 

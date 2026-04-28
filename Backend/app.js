@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import connectToDb from './db/db.js';
 import userRoutes from './routes/user.routes.js'
 import captainRoutes from './routes/captain.routes.js';
+import mapRoutes from './routes/maps.routes.js';
+import rideRoutes from './routes/ride.routes.js';
 
 
 
@@ -26,5 +28,6 @@ app.get('/', (req, res) => {
 
 app.use('/users', userRoutes)
 app.use('/captains', captainRoutes)
-
+app.use('/maps', mapRoutes)
+app.use('/rides', rideRoutes)
 export default app;

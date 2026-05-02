@@ -2,12 +2,15 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import React, { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import FinishRide from '../components/FInishRide'
+import FinishRide from '../components/FinishRide'
+import { useContext } from 'react'
+import { CaptainDataContext } from '../context/CaptainContext'
 
 const CaptainRiding = () => {
 
     const [finishRidePanel, setFinishRidePanel] = useState(false)
     const finishRidePanelRef = useRef(null)
+    const {ride}=useContext(CaptainDataContext)
 
     useGSAP(
     function () {
@@ -64,7 +67,7 @@ const CaptainRiding = () => {
         <div
         ref={finishRidePanelRef}
         className="fixed w-full z-10 translate-y-full  bg-white bottom-0  pt-12 px-3 py-6">
-        <FinishRide setFinishRidePanel={setFinishRidePanel}/>
+        <FinishRide setFinishRidePanel={setFinishRidePanel} ride={ride}/>
       </div>
 
       

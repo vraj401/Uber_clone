@@ -12,6 +12,8 @@ import CaptainHome from './pages/CaptainHome'
 import CaptainProtectWrapper from './pages/captainProtectWrapper'
 import Riding from './components/Riding'
 import CaptainRiding from './pages/CaptainRiding'
+import PaymentPage from './pages/PaymentPage'
+import RazorpayPage from './pages/RazorpayPage'
 
 const App = () => {
   return (
@@ -45,7 +47,12 @@ const App = () => {
     <Route path='/captain-riding' element={
       <CaptainRiding/>
     } />
+
+     <Route path='/razorpaypage' element={<RazorpayPage />} />
+
      </Routes>
+
+   
     </div>
   )
 }

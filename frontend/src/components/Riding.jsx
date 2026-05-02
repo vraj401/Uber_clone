@@ -1,15 +1,17 @@
 import React from 'react'
+import LiveTracking from './liveTracking'
 
 const Riding = (props) => {
   return (
     <div className='h-screen'>
         
 <div className='h-1/2'>
-     <img
-          className="h-full w-full object-cover"
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSixb3-y80u_w_UbHzb1pmvRu2WYSWgweAG3w&s"
-          alt=""
-        />
+     <LiveTracking 
+       userLocation={{ lat: 23.0225, lng: 72.5714 }}
+       destinationLocation={{ lat: 23.1815, lng: 72.6369 }}
+       driverLocation={{ lat: 23.0225, lng: 72.5714 }}
+       rideStatus="In Transit"
+     />
 </div>
 
 <div className='h-1/2 p-4'>

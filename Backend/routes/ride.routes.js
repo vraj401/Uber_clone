@@ -46,4 +46,14 @@ router.get("/getOtpUser",
     rideController.getOtpForUser
 )
 
+
+router.post(
+    "/ride-completed",
+    authCaptain,
+    body("rideId").isMongoId().withMessage("Invalid ride ID"),
+    rideController.rideCompleted
+)
+
+
+
 export default router;

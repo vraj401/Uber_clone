@@ -156,6 +156,49 @@ const rideAccepted = async (req,res) =>{
 
 }
 
+const rideCompleted = async (req,res) =>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            success: false,
+            message: errors.array()[0].msg
+        });
+    }
+
+    const {rideId} = req.body;
+    try {
+        const ride = await Ride.findByIdAndUpdate(rideId,{captain:req.captain._id, status:"completed"}, {new:true}).populate("user").populate("captain");
+
+        if (!ride) {
+            return res.status(404).json({
+                success: false,
+                message: "Ride not found"
+            });
+        }
+        
+        sendMessageToSocketId(ride.user.socketId,{
+            event:"ride-completed",
+            data:ride
+           })
+        return res.status(200).json({
+            success:true,
+            message:"Ride Completed",
+            ride
+           })
+    } catch (error) {
+        
+        return res.status(500).json({
+            success: false,
+            message: "Failed to Complete ride",
+            error: error.message
+        });
+    }
+
+
+   
+
+}
+
 const getOtpForUser = async (req, res) => {
     try {
         const { rideId } = req.query;
@@ -195,5 +238,6 @@ export default {
     createRide,
     confirmRide,
     rideAccepted,
-    getOtpForUser
+    getOtpForUser,
+    rideCompleted
 };

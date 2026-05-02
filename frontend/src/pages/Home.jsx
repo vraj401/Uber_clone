@@ -12,6 +12,8 @@ import LookingForDriver from "../components/LookingForDriver";
 import axios from "axios";
 import { SocketContext } from "../context/SocketContext";
 import { UserContext } from "../context/UserContext";
+import PaymentPage from "./PaymentPage";
+import LiveTracking from "../components/liveTracking";
 
 
 
@@ -23,6 +25,7 @@ const Home = () => {
   const confirmRidePanelRef = useRef(null);
   const vehicleFoundRef = useRef(null);
   const waitingForDriverRef = useRef(null);
+  const paymentPageRef = useRef(null);
 
   const panelRef = useRef(null);
   const panelCloseRef = useRef(null);
@@ -37,7 +40,9 @@ const Home = () => {
   const [fare, setFare] = useState(null)
   const [vehicleType, setVehicleType] = useState(null)
   const [distance, setDistance] = useState(null)
-
+  const [paymentPage,setPaymentPage] = useState(false)
+const {ride} = useContext(UserContext);
+const { setRide } = useContext(UserContext);
   const { socket } = useContext(SocketContext);
   const {user} = useContext(UserContext);
 const [otp, setOtp] = useState(null);
@@ -45,8 +50,17 @@ const [otp, setOtp] = useState(null);
 
  
   useEffect(() => {
-    socket.on("ride-Accepted", async (ride) => {
 
+     socket.off("ride-Accepted");
+  socket.off("ride-confirmed");
+  socket.off("ride-completed");
+
+
+
+    socket.on("ride-Accepted", async (ride) => {
+socket.on("ride-Accepted", async (ride) => {
+  console.log("ride-Accepted fired:", new Date().toISOString()); // ← add this
+});
       const otpResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/getOtpUser`,{
         params:{
           rideId:ride._id
@@ -54,7 +68,7 @@ const [otp, setOtp] = useState(null);
         headers:{Authorization: `Bearer ${localStorage.getItem('token')}`}
       });
 
-     
+setRide(ride);     
       setVehiclePanel(false);
       setConfirmRidePanel(false);
       setVehicleFound(false);
@@ -67,12 +81,29 @@ setOtp(newOtp);
 
     socket.on("ride-confirmed", (ride) => {
       setWaitingForDriver(false);
-      console.log("Ride confirmed:", ride);
-      alert("Your ride has been started! Pay the driver when you reach your destination.");
+     
+      
+     
+    });
+
+    socket.on("ride-completed", (ride) => {
+      setPaymentPage(true);
+      console.log("Payment Page opening and ride completed for ", ride);
+     setRide();
+      setPickup("");
+      setDestination("");
+      setVehicleType(null);
+      setFare(null);
+      setOtp(null);
+
     })
+
+    
     
     return () => {
-      socket.off("ride-Accepted");
+       socket.off("ride-Accepted");
+    socket.off("ride-confirmed");
+    socket.off("ride-completed");
     };
   },[socket])
 
@@ -176,6 +207,20 @@ setFare(response.data.fare);
 
 useGSAP(
   function () {
+    if (paymentPage) {
+      gsap.to(paymentPageRef.current, {
+        transform: "translateY(0)",
+      });
+    } else {
+      gsap.to(paymentPageRef.current, {
+        transform: "translateY(100%)",
+      });
+    }
+  },
+  [paymentPage],
+);
+useGSAP(
+  function () {
     if (vehiclePanel) {
       gsap.to(vehiclePanelRef.current, {
         transform: "translateY(0)",
@@ -246,6 +291,8 @@ const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create
     Authorization: `Bearer ${localStorage.getItem('token')}`
   }
 })
+
+console.log("Ride created user End:", response.data.ride);
 }
 
   return (
@@ -265,6 +312,7 @@ const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSixb3-y80u_w_UbHzb1pmvRu2WYSWgweAG3w&s"
           alt=""
         />
+        {/* <LiveTracking/> */}
       </div>
 
       <div className="flex flex-col justify-end h-screen absolute top-0 w-full">
@@ -343,10 +391,12 @@ const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create
       </div>
 
       <div ref={waitingForDriverRef} className="fixed w-full z-10 translate-y-[200%] bg-white bottom-0  pt-12 px-3 py-6">
-       <WaitingForDriver setWaitingForDriver={setWaitingForDriver} pickup={pickup} destination={destination} vehicleType={vehicleType} otp={otp}/>
+       <WaitingForDriver setWaitingForDriver={setWaitingForDriver} ride={ride} pickup={pickup} destination={destination} vehicleType={vehicleType} otp={otp}/>
       </div>
 
-       
+       <div ref={paymentPageRef} className="fixed w-full z-10 translate-y-[200%] bg-white bottom-0  pt-12 px-3 py-6">
+      <PaymentPage setPaymentPage={setPaymentPage} fare={fare} vehicleType={vehicleType} ride={ride}/>
+      </div>
 
     </div>
   );

@@ -19,7 +19,9 @@ const CaptainHome = () => {
   const confirmRidePopupPanelRef = useRef(null);
   const {socket} = useContext(SocketContext);
   const {captain} = useContext(CaptainDataContext);
-  const [ride, setRide] = useState(null);
+  const {ride}=useContext(CaptainDataContext);
+  const {setRide}=useContext(CaptainDataContext);
+
   const otp = useContext(CaptainDataContext).otp;
 const setOtp = useContext(CaptainDataContext).setOtp;
 
@@ -45,6 +47,7 @@ const setOtp = useContext(CaptainDataContext).setOtp;
     const updateLocation = ()=>{
       if(navigator.geolocation){
         console.log("Updating location...")
+   
         navigator.geolocation.getCurrentPosition((position)=>{
           console.log(position.coords.latitude, position.coords.longitude)
           socket.emit("update-location-captain",{
@@ -59,6 +62,7 @@ const setOtp = useContext(CaptainDataContext).setOtp;
     }
 
     const locationInterval = setInterval(updateLocation,10000);
+  
     updateLocation();
     return ()=>{
       clearInterval(locationInterval);
@@ -109,9 +113,9 @@ const setOtp = useContext(CaptainDataContext).setOtp;
       console.error("Ride acceptance failed:", data);
       alert(data.message || "Failed to accept ride"); 
     }
-
-
+    setRide(data.ride ?? data);
 };
+
 
   useGSAP(
     function () {
@@ -180,7 +184,7 @@ const setOtp = useContext(CaptainDataContext).setOtp;
       <div
         ref={confirmRidePopupPanelRef}
         className="fixed w-full z-10 h-screen translate-y-full  bg-white bottom-0  pt-12 px-3 py-6">
-        <ConfirmRidePopUp setConfirmRidePopupPanel={setConfirmRidePopupPanel} confirmRide={confirmRide} otp={otp} setOtp={setOtp} />
+        <ConfirmRidePopUp setConfirmRidePopupPanel={setConfirmRidePopupPanel} confirmRide={confirmRide} otp={otp} setOtp={setOtp} ride={ride}/>
       </div>
     </div>
   );

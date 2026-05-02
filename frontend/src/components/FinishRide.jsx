@@ -1,11 +1,46 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { SocketContext } from "../context/SocketContext";
+import { useContext } from 'react';
+import { CaptainDataContext } from '../context/CaptainContext';
+import { useNavigate } from 'react-router-dom'
 
 const FinishRide = (props) => {
-    const submitHandler = ()=>{
+    const {socket} = useContext(SocketContext);
+    const {ride} = useContext(CaptainDataContext)
+    const navigate = useNavigate()
 
+    const completeRideHandler = async ()=>{
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/rides/ride-completed`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({
+                    rideId: ride._id
+                })
+            })
+
+            const data = await response.json();
+            if(response.status === 200){
+                socket.emit("ride-completed", data.ride);
+                alert("Ride marked as completed! Redirecting to home page.");
+                navigate("/captain-home");
+            } else {
+                alert("Failed to complete the ride. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error completing the ride:", error);
+            alert("An error occurred while completing the ride. Please try again.");
+        }
     }
-  return (
+
+
+  
+  
+    return (
    <div>
         
         <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
@@ -48,8 +83,9 @@ const FinishRide = (props) => {
 
                 
                 <div className='mt-6 w-full'>
-                   
-                        <Link to='/captain-home'  className='text-lg w-full flex justify-center mt-5 bg-green-600 text-white font-semibold p-3 rounded-lg'>Finish Ride</Link>
+                 
+                        <button onClick={completeRideHandler} className='text-lg w-full flex justify-center mt-5 bg-green-600 text-white font-semibold p-3 rounded-lg'>Finish Ride</button>
+                        
                     <p className=' mt-10 text-xs'>Click on the finish ride button if you have completed the payment.</p>
                 </div>
             </div>

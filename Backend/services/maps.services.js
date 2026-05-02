@@ -30,8 +30,8 @@ export const getAddressCoordinate = async (address) => {
                 // ltd: location.lat,
                 // lng: location.lng
 
-                ltd:22.99322654534842 ,
-                lng:72.49809207491148
+                ltd:23.014778129999993 ,
+                lng:73.06861876999997
             };
 
 };

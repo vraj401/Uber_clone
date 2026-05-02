@@ -7,7 +7,7 @@ const ConfirmRidePopUp = (props) => {
     const submitHandler = (e)=>{
 e.preventDefault()
     }
-    
+   
   return (
     <div>
         
